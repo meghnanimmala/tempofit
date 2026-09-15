@@ -1,63 +1,36 @@
-# TempoFit
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-TempoFit is a Spotify-integrated workout playlist generator that creates personalized playlists based on workout type, intensity, duration, and music preferences.
+## Getting Started
 
-## Project Goal
+First, run the development server:
 
-TempoFit was created as a portfolio project to explore product management, system design, API integrations, OAuth 2.0, and full-stack development.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Core User Flow
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-1. Connect a Spotify account
-2. Select music preferences
-3. Describe a workout in natural language
-4. Enter workout duration
-5. TempoFit converts the workout into structured parameters
-6. Generate and preview a personalized playlist
-7. Save the playlist to Spotify
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## MVP Features
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- Spotify OAuth authentication
-- Natural-language workout input
-- Workout intensity and type interpretation
-- Warm-up, main workout, and cooldown playlist phases
-- Personalized track selection
-- Playlist duration matching
-- Spotify playlist creation
+## Learn More
 
-## Technical Architecture
+To learn more about Next.js, take a look at the following resources:
 
-TempoFit uses a Next.js web application with server-side logic for Spotify integration and playlist generation.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-Workout descriptions are converted into a structured `WorkoutProfile`, which is passed through a playlist generation pipeline:
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-Workout Input → Workout Parser → WorkoutProfile → Workout Phase Generator → Candidate Track Retrieval → Track Ranking → Duration Matcher → Spotify Playlist
+## Deploy on Vercel
 
-User music preferences are stored locally in the browser to keep the MVP architecture lightweight.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## Planned Tech Stack
-
-- Next.js
-- JavaScript / TypeScript
-- Spotify Web API
-- OAuth 2.0
-- Browser Storage
-- Git / GitHub
-- Figma
-- Jira / Confluence
-
-## Project Status
-
-**Sprint 0 — Planning & Design**
-
-Completed:
-- MVP scope and requirements
-- Product Requirements Document (PRD)
-- User flow
-- Low-fidelity interactive prototype
-- System architecture
-- Spotify Web API feasibility validation
-- GitHub repository setup
-
-Development is the next phase.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
