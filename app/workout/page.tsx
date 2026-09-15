@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { parseWorkout } from "@/lib/workoutParser";
 
 export default function WorkoutPage() {
   const router = useRouter();
@@ -18,11 +19,32 @@ export default function WorkoutPage() {
   }
 
   function handleGenerate() {
-    localStorage.setItem("tempofit_workout", workout);
-    localStorage.setItem("tempofit_duration", duration.toString());
+    const savedGenres = JSON.parse(
+    localStorage.getItem("tempofit_genres") || "[]"
+  );
 
-    router.push("/playlist");
-  }
+  const workoutProfile = parseWorkout(
+    workout,
+    duration,
+    savedGenres
+  );
+
+  localStorage.setItem("tempofit_workout", workout);
+
+  localStorage.setItem(
+    "tempofit_duration",
+    duration.toString()
+  );
+
+  localStorage.setItem(
+    "tempofit_workout_profile",
+    JSON.stringify(workoutProfile)
+  );
+
+  console.log("TempoFit WorkoutProfile:", workoutProfile);
+
+  router.push("/playlist");
+}
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
