@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
   const tokens = await tokenResponse.json();
 
   const response = NextResponse.redirect(
-    new URL("/connected", process.env.SPOTIFY_REDIRECT_URI!)
+    new URL("/preferences", process.env.SPOTIFY_REDIRECT_URI!)
   );
 
   response.cookies.set("spotify_access_token", tokens.access_token, {
