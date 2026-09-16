@@ -6,6 +6,11 @@ Instead of manually building a playlist before exercising, users describe their 
 
 ![TempoFit playlist preview](public/screenshots/tempofit-playlist.png)
 
+## Explore the Project
+A visual walkthrough of the product strategy, user experience, architecture, technical constraints, testing, and key decisions behind TempoFit.
+
+[View the TempoFit Product Case Study](docs/TempoFit-Product-Case-Study.pdf)
+
 ## What It Does
 
 TempoFit allows users to:
