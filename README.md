@@ -9,7 +9,7 @@ Instead of manually building a playlist before exercising, users describe their 
 ## Explore the Project
 A visual walkthrough of the product strategy, user experience, architecture, technical constraints, testing, and key decisions behind TempoFit.
 
-[View the TempoFit Product Case Study](docs/TempoFit-Product-Case-Study.pdf)
+[View the TempoFit Product Case Study](TempoFit_Product_Case_Study.pptx)
 
 ## What It Does
 
