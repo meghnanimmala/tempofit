@@ -43,20 +43,28 @@ function formatDuration(ms: number) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
 
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  return `${minutes}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
 }
 
 export default function PlaylistPage() {
   const router = useRouter();
 
-  const [profile, setProfile] = useState<WorkoutProfile | null>(null);
-  const [playlist, setPlaylist] = useState<PlaylistResult | null>(null);
+  const [profile, setProfile] =
+    useState<WorkoutProfile | null>(null);
+
+  const [playlist, setPlaylist] =
+    useState<PlaylistResult | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [saving, setSaving] = useState(false);
-  const [savedUrl, setSavedUrl] = useState<string | null>(null);
+
+  const [savedUrl, setSavedUrl] =
+    useState<string | null>(null);
+
   const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
@@ -80,12 +88,23 @@ export default function PlaylistPage() {
         const genre =
           workoutProfile.preferred_genres[0] || "pop";
 
-        // Step 1: Search Spotify for candidate tracks.
-        let searchResponse = await fetch(
-          `/api/search?genre=${encodeURIComponent(genre)}`
-        );
+        const discovery =
+          localStorage.getItem(
+            "tempofit_discovery"
+          ) || "50";
 
-        // If the access token expired, refresh it and retry once.
+        const searchUrl =
+          `/api/search?genre=${encodeURIComponent(
+            genre
+          )}&discovery=${encodeURIComponent(
+            discovery
+          )}`;
+
+        // Search Spotify for candidate tracks.
+        let searchResponse = await fetch(searchUrl);
+
+        // If the access token expired,
+        // refresh it and retry once.
         if (searchResponse.status === 401) {
           const refreshResponse = await fetch(
             "/api/auth/refresh",
@@ -100,16 +119,17 @@ export default function PlaylistPage() {
             );
           }
 
-          searchResponse = await fetch(
-            `/api/search?genre=${encodeURIComponent(genre)}`
-          );
+          searchResponse = await fetch(searchUrl);
         }
 
         if (!searchResponse.ok) {
-          throw new Error("Spotify search failed.");
+          throw new Error(
+            "Spotify search failed."
+          );
         }
 
-        const searchData = await searchResponse.json();
+        const searchData =
+          await searchResponse.json();
 
         if (!searchData.tracks?.length) {
           throw new Error(
@@ -117,23 +137,34 @@ export default function PlaylistPage() {
           );
         }
 
-        // Step 2: Send candidates through TempoFit's playlist engine.
-        const generateResponse = await fetch("/api/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            tracks: searchData.tracks,
-            duration: workoutProfile.duration_minutes,
-            warmup_minutes: workoutProfile.warmup_minutes,
-            main_minutes: workoutProfile.main_minutes,
-            cooldown_minutes: workoutProfile.cooldown_minutes,
-          }),
-        });
+        // Send Spotify candidates through
+        // TempoFit's playlist engine.
+        const generateResponse = await fetch(
+          "/api/generate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              tracks: searchData.tracks,
+              duration:
+                workoutProfile.duration_minutes,
+              warmup_minutes:
+                workoutProfile.warmup_minutes,
+              main_minutes:
+                workoutProfile.main_minutes,
+              cooldown_minutes:
+                workoutProfile.cooldown_minutes,
+            }),
+          }
+        );
 
         if (!generateResponse.ok) {
-          throw new Error("Playlist generation failed.");
+          throw new Error(
+            "Playlist generation failed."
+          );
         }
 
         const generatedPlaylist =
@@ -164,26 +195,36 @@ export default function PlaylistPage() {
       setSaveError("");
 
       const playlistData = {
-        uris: playlist.tracks.map((track) => track.uri),
+        uris: playlist.tracks.map(
+          (track) => track.uri
+        ),
         workoutType: profile.workout_type,
         focus: profile.focus,
         duration: profile.duration_minutes,
-        genre: profile.preferred_genres.join(", "),
+        genre:
+          profile.preferred_genres.join(", "),
       };
 
       async function sendPlaylist() {
-        return fetch("/api/spotify/playlist", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(playlistData),
-        });
+        return fetch(
+          "/api/spotify/playlist",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify(
+              playlistData
+            ),
+          }
+        );
       }
 
       let response = await sendPlaylist();
 
-      // If the access token expired, refresh it and retry once.
+      // Refresh Spotify token if needed
+      // and retry the save once.
       if (response.status === 401) {
         const refreshResponse = await fetch(
           "/api/auth/refresh",
@@ -243,11 +284,14 @@ export default function PlaylistPage() {
           </h1>
 
           <p className="mb-6 text-gray-400">
-            {error || "Something went wrong."}
+            {error ||
+              "Something went wrong."}
           </p>
 
           <button
-            onClick={() => router.push("/workout")}
+            onClick={() =>
+              router.push("/workout")
+            }
             className="rounded-full bg-green-500 px-6 py-3 font-semibold text-black"
           >
             Back to Workout
@@ -271,13 +315,18 @@ export default function PlaylistPage() {
             </h1>
 
             <p className="mt-3 text-gray-400">
-              {profile.focus} · {profile.duration_minutes} min ·{" "}
-              {profile.preferred_genres.join(", ")}
+              {profile.focus} ·{" "}
+              {profile.duration_minutes} min ·{" "}
+              {profile.preferred_genres.join(
+                ", "
+              )}
             </p>
           </div>
 
           <button
-            onClick={() => router.push("/workout")}
+            onClick={() =>
+              router.push("/workout")
+            }
             className="rounded-full border border-gray-700 px-5 py-2 text-sm hover:border-green-400"
           >
             Edit Workout
@@ -333,7 +382,11 @@ export default function PlaylistPage() {
                     </p>
 
                     <h2 className="text-xl font-bold">
-                      {phaseLabels[phase.name]}
+                      {
+                        phaseLabels[
+                          phase.name
+                        ]
+                      }
                     </h2>
                   </div>
 
@@ -343,44 +396,52 @@ export default function PlaylistPage() {
                     </p>
 
                     <p className="text-sm text-gray-400">
-                      {formatDuration(phase.duration_ms)}
+                      {formatDuration(
+                        phase.duration_ms
+                      )}
                     </p>
                   </div>
                 </div>
 
                 <div className="overflow-hidden rounded-2xl border border-gray-800">
-                  {phase.tracks.map((track, index) => (
-                    <div
-                      key={track.id}
-                      className="flex items-center gap-4 border-b border-gray-800 bg-gray-950 p-4 last:border-b-0"
-                    >
-                      <span className="w-6 text-sm text-gray-600">
-                        {index + 1}
-                      </span>
+                  {phase.tracks.map(
+                    (track, index) => (
+                      <div
+                        key={track.id}
+                        className="flex items-center gap-4 border-b border-gray-800 bg-gray-950 p-4 last:border-b-0"
+                      >
+                        <span className="w-6 text-sm text-gray-600">
+                          {index + 1}
+                        </span>
 
-                      {track.album_image && (
-                        <img
-                          src={track.album_image}
-                          alt=""
-                          className="h-12 w-12 rounded"
-                        />
-                      )}
+                        {track.album_image && (
+                          <img
+                            src={
+                              track.album_image
+                            }
+                            alt=""
+                            className="h-12 w-12 rounded"
+                          />
+                        )}
 
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-semibold">
-                          {track.name}
-                        </p>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-semibold">
+                            {track.name}
+                          </p>
 
-                        <p className="truncate text-sm text-gray-500">
-                          {track.artist}
+                          <p className="truncate text-sm text-gray-500">
+                            {track.artist}
+                          </p>
+                        </div>
+
+                        <p className="text-sm text-gray-500">
+                          {formatDuration(
+                            track.duration_ms
+                          )}
                         </p>
                       </div>
-
-                      <p className="text-sm text-gray-500">
-                        {formatDuration(track.duration_ms)}
-                      </p>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </section>
             );
@@ -404,7 +465,9 @@ export default function PlaylistPage() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => window.location.reload()}
+              onClick={() =>
+                window.location.reload()
+              }
               className="rounded-full border border-gray-700 px-6 py-3 font-semibold hover:border-green-400"
             >
               Regenerate
